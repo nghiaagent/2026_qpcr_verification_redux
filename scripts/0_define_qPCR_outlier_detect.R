@@ -1,10 +1,6 @@
 # Load packages
-
-if (!require("pacman")) {
-  install.packages("pacman")
-}
-library(pacman)
-p_load(rlang, tidyverse)
+library("rlang")
+library("tidyverse")
 
 # Functions defined here:
 ## Strict

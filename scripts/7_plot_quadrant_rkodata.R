@@ -1,4 +1,5 @@
 # Import packages
+library("DESeq2")
 library("tidyverse")
 
 # Plot logFC of txome and Rachel's qPCR data as XY plots
