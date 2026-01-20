@@ -108,28 +108,28 @@ mndata_plot_goi_hMSC_response <- function(gene_sel) {
     ) +
     scale_x_discrete(
       labels = c(
-        "hMSC-21558 P5 D5 Control" = "P5 D5 Ctrl",
-        "hMSC-21558 P5 D5 Heparin" = "P5 D5 Hep",
-        "hMSC-21558 P13 D5 Control" = "P13 D5 Ctrl",
-        "hMSC-21558 P13 D5 Heparin" = "P13 D5 Hep"
+        "hMSC-21558 P5 D5 Control" = "P+5 D5 Control",
+        "hMSC-21558 P5 D5 Heparin" = "P+5 D5 Heparin",
+        "hMSC-21558 P13 D5 Control" = "P+13 D5 Control",
+        "hMSC-21558 P13 D5 Heparin" = "P+13 D5 Heparin"
       )
     ) +
     scale_colour_manual(
       values = palette_merge[c(1, 2, 5, 6)],
       labels = c(
-        "hMSC-21558 P5 D5 Control" = "P5 D5 Ctrl",
-        "hMSC-21558 P5 D5 Heparin" = "P5 D5 Hep",
-        "hMSC-21558 P13 D5 Control" = "P13 D5 Ctrl",
-        "hMSC-21558 P13 D5 Heparin" = "P13 D5 Hep"
+        "hMSC-21558 P5 D5 Control" = "P+5 D5 Control",
+        "hMSC-21558 P5 D5 Heparin" = "P+5 D5 Heparin",
+        "hMSC-21558 P13 D5 Control" = "P+13 D5 Control",
+        "hMSC-21558 P13 D5 Heparin" = "P+13 D5 Heparin"
       )
     ) +
     scale_fill_manual(
       values = palette_merge[c(1, 2, 5, 6)],
       labels = c(
-        "hMSC-21558 P5 D5 Control" = "P5 D5 Ctrl",
-        "hMSC-21558 P5 D5 Heparin" = "P5 D5 Hep",
-        "hMSC-21558 P13 D5 Control" = "P13 D5 Ctrl",
-        "hMSC-21558 P13 D5 Heparin" = "P13 D5 Hep"
+        "hMSC-21558 P5 D5 Control" = "P+5 D5 Control",
+        "hMSC-21558 P5 D5 Heparin" = "P+5 D5 Heparin",
+        "hMSC-21558 P13 D5 Control" = "P+13 D5 Control",
+        "hMSC-21558 P13 D5 Heparin" = "P+13 D5 Heparin"
       )
     ) +
     scale_shape_manual(
@@ -230,8 +230,8 @@ mndata_plot_cellpops_baseline <- function(gene_sel) {
     ) +
     scale_x_discrete(
       labels = c(
-        "hMSC-21558 P5 D5 Control" = "hMSC P5",
-        "hMSC-21558 P13 D5 Control" = "hMSC P13",
+        "hMSC-21558 P5 D5 Control" = "hMSC P+5",
+        "hMSC-21558 P13 D5 Control" = "hMSC P+13",
         "ReNcell CX D5 Control" = "ReNcell CX",
         "SH-SY5Y D3 Control" = "SH-SY5Y",
         "ReNcell VM D5 Control" = "ReNcell VM",
@@ -241,8 +241,8 @@ mndata_plot_cellpops_baseline <- function(gene_sel) {
     scale_colour_manual(
       values = palette_merge[c(1, 5, 7, 9, 11, 13)],
       labels = c(
-        "hMSC-21558 P5 D5 Control" = "hMSC P5",
-        "hMSC-21558 P13 D5 Control" = "hMSC P13",
+        "hMSC-21558 P5 D5 Control" = "hMSC P+5",
+        "hMSC-21558 P13 D5 Control" = "hMSC P+13",
         "ReNcell CX D5 Control" = "ReNcell CX",
         "SH-SY5Y D3 Control" = "SH-SY5Y",
         "ReNcell VM D5 Control" = "ReNcell VM",
@@ -252,8 +252,8 @@ mndata_plot_cellpops_baseline <- function(gene_sel) {
     scale_fill_manual(
       values = palette_merge[c(1, 5, 7, 9, 11, 13)],
       labels = c(
-        "hMSC-21558 P5 D5 Control" = "hMSC P5",
-        "hMSC-21558 P13 D5 Control" = "hMSC P13",
+        "hMSC-21558 P5 D5 Control" = "hMSC P+5",
+        "hMSC-21558 P13 D5 Control" = "hMSC P+13",
         "ReNcell CX D5 Control" = "ReNcell CX",
         "SH-SY5Y D3 Control" = "SH-SY5Y",
         "ReNcell VM D5 Control" = "ReNcell VM",
@@ -334,52 +334,52 @@ mndata_plot_cellpops_response <- function(gene_sel) {
     ) +
     scale_x_discrete(
       labels = c(
-        "hMSC-21558 P5 D5 Control" = "hMSC P5 Ctrl",
-        "hMSC-21558 P5 D5 Heparin" = "hMSC P5 Hep",
-        "hMSC-21558 P13 D5 Control" = "hMSC P13 Ctrl",
-        "hMSC-21558 P13 D5 Heparin" = "hMSC P13 Hep",
-        "ReNcell CX D5 Control" = "RCX Ctrl",
-        "ReNcell CX D5 Heparin" = "RCX Hep",
-        "ReNcell VM D5 Control" = "RVM Ctrl",
-        "ReNcell VM D5 Heparin" = "RVM Hep",
-        "1321N1 D5 Control" = "1321 Ctrl",
-        "1321N1 D5 Heparin" = "1321 Hep",
-        "SH-SY5Y D3 Control" = "SH Ctrl",
-        "SH-SY5Y D3 Heparin" = "SH Hep"
+        "hMSC-21558 P5 D5 Control" = "hMSC P+5 Control",
+        "hMSC-21558 P5 D5 Heparin" = "hMSC P+5 Heparin",
+        "hMSC-21558 P13 D5 Control" = "hMSC P+13 Control",
+        "hMSC-21558 P13 D5 Heparin" = "hMSC P+13 Heparin",
+        "ReNcell CX D5 Control" = "ReNcell CX Control",
+        "ReNcell CX D5 Heparin" = "ReNcell CX Heparin",
+        "ReNcell VM D5 Control" = "ReNcell VM Control",
+        "ReNcell VM D5 Heparin" = "ReNcell VM Heparin",
+        "1321N1 D5 Control" = "1321N1 Control",
+        "1321N1 D5 Heparin" = "1321N1 Heparin",
+        "SH-SY5Y D3 Control" = "SH-SY5Y Control",
+        "SH-SY5Y D3 Heparin" = "SH-SY5Y Heparin"
       )
     ) +
     scale_colour_manual(
       values = palette_merge[c(1:2, 5:14)],
       labels = c(
-        "hMSC-21558 P5 D5 Control" = "hMSC P5 Ctrl",
-        "hMSC-21558 P5 D5 Heparin" = "hMSC P5 Hep",
-        "hMSC-21558 P13 D5 Control" = "hMSC P13 Ctrl",
-        "hMSC-21558 P13 D5 Heparin" = "hMSC P13 Hep",
-        "ReNcell CX D5 Control" = "RCX Ctrl",
-        "ReNcell CX D5 Heparin" = "RCX Hep",
-        "ReNcell VM D5 Control" = "RVM Ctrl",
-        "ReNcell VM D5 Heparin" = "RVM Hep",
-        "1321N1 D5 Control" = "1321 Ctrl",
-        "1321N1 D5 Heparin" = "1321 Hep",
-        "SH-SY5Y D3 Control" = "SH Ctrl",
-        "SH-SY5Y D3 Heparin" = "SH Hep"
+        "hMSC-21558 P5 D5 Control" = "hMSC P+5 Control",
+        "hMSC-21558 P5 D5 Heparin" = "hMSC P+5 Heparin",
+        "hMSC-21558 P13 D5 Control" = "hMSC P+13 Control",
+        "hMSC-21558 P13 D5 Heparin" = "hMSC P+13 Heparin",
+        "ReNcell CX D5 Control" = "ReNcell CX Control",
+        "ReNcell CX D5 Heparin" = "ReNcell CX Heparin",
+        "ReNcell VM D5 Control" = "ReNcell VM Control",
+        "ReNcell VM D5 Heparin" = "ReNcell VM Heparin",
+        "1321N1 D5 Control" = "1321N1 Control",
+        "1321N1 D5 Heparin" = "1321N1 Heparin",
+        "SH-SY5Y D3 Control" = "SH-SY5Y Control",
+        "SH-SY5Y D3 Heparin" = "SH-SY5Y Heparin"
       )
     ) +
     scale_fill_manual(
       values = palette_merge[c(1:2, 5:14)],
       labels = c(
-        "hMSC-21558 P5 D5 Control" = "hMSC P5 Ctrl",
-        "hMSC-21558 P5 D5 Heparin" = "hMSC P5 Hep",
-        "hMSC-21558 P13 D5 Control" = "hMSC P13 Ctrl",
-        "hMSC-21558 P13 D5 Heparin" = "hMSC P13 Hep",
-        "ReNcell CX D5 Control" = "RCX Ctrl",
-        "ReNcell CX D5 Heparin" = "RCX Hep",
-        "ReNcell VM D5 Control" = "RVM Ctrl",
-        "ReNcell VM D5 Heparin" = "RVM Hep",
-        "1321N1 D5 Control" = "1321 Ctrl",
-        "1321N1 D5 Heparin" = "1321 Hep",
-        "SH-SY5Y D3 Control" = "SH Ctrl",
-        "SH-SY5Y D3 Heparin" = "SH Hep"
+        "hMSC-21558 P5 D5 Control" = "hMSC P+5 Control",
+        "hMSC-21558 P5 D5 Heparin" = "hMSC P+5 Heparin",
+        "hMSC-21558 P13 D5 Control" = "hMSC P+13 Control",
+        "hMSC-21558 P13 D5 Heparin" = "hMSC P+13 Heparin",
+        "ReNcell CX D5 Control" = "ReNcell CX Control",
+        "ReNcell CX D5 Heparin" = "ReNcell CX Heparin",
+        "ReNcell VM D5 Control" = "ReNcell VM Control",
+        "ReNcell VM D5 Heparin" = "ReNcell VM Heparin",
+        "1321N1 D5 Control" = "1321N1 Control",
+        "1321N1 D5 Heparin" = "1321N1 Heparin",
+        "SH-SY5Y D3 Control" = "SH-SY5Y Control",
+        "SH-SY5Y D3 Heparin" = "SH-SY5Y Heparin"
       )
     ) +
     scale_shape_manual(
@@ -495,8 +495,8 @@ mndata_plot_cellpops_response_lfc <- function(gene_sel) {
     ) +
     scale_x_discrete(
       labels = c(
-        "Hep_hMSC_P5" = "hMSC P5",
-        "Hep_hMSC_P13" = "hMSC P13",
+        "Hep_hMSC_P5" = "hMSC P+5",
+        "Hep_hMSC_P13" = "hMSC P+13",
         "Hep_RCX" = "ReNcell CX",
         "Hep_SH" = "SH-SY5Y",
         "Hep_RVM" = "ReNcell VM",
@@ -506,8 +506,8 @@ mndata_plot_cellpops_response_lfc <- function(gene_sel) {
     scale_fill_manual(
       values = palette_merge[c(1, 5, 7, 9, 11, 13)],
       labels = c(
-        "Hep_hMSC_P5" = "hMSC P5",
-        "Hep_hMSC_P13" = "hMSC P13",
+        "Hep_hMSC_P5" = "hMSC P+5",
+        "Hep_hMSC_P13" = "hMSC P+13",
         "Hep_RCX" = "ReNcell CX",
         "Hep_SH" = "SH-SY5Y",
         "Hep_RVM" = "ReNcell VM",
@@ -608,18 +608,18 @@ mndata_plot_cellpops_response_linexp <- function(gene_sel) {
     scale_fill_manual(
       values = palette_merge[c(1:2, 5:14)],
       labels = c(
-        "hMSC-21558 P5 D5 Control" = "hMSC P5 Ctrl",
-        "hMSC-21558 P5 D5 Heparin" = "hMSC P5 Hep",
-        "hMSC-21558 P13 D5 Control" = "hMSC P13 Ctrl",
-        "hMSC-21558 P13 D5 Heparin" = "hMSC P13 Hep",
-        "ReNcell CX D5 Control" = "RCX Ctrl",
-        "ReNcell CX D5 Heparin" = "RCX Hep",
-        "ReNcell VM D5 Control" = "RVM Ctrl",
-        "ReNcell VM D5 Heparin" = "RVM Hep",
-        "1321N1 D5 Control" = "1321 Ctrl",
-        "1321N1 D5 Heparin" = "1321 Hep",
-        "SH-SY5Y D3 Control" = "SH Ctrl",
-        "SH-SY5Y D3 Heparin" = "SH Hep"
+        "hMSC-21558 P5 D5 Control" = "hMSC P+5 Control",
+        "hMSC-21558 P5 D5 Heparin" = "hMSC P+5 Heparin",
+        "hMSC-21558 P13 D5 Control" = "hMSC P+13 Control",
+        "hMSC-21558 P13 D5 Heparin" = "hMSC P+13 Heparin",
+        "ReNcell CX D5 Control" = "ReNcell CX Control",
+        "ReNcell CX D5 Heparin" = "ReNcell CX Heparin",
+        "ReNcell VM D5 Control" = "ReNcell VM Control",
+        "ReNcell VM D5 Heparin" = "ReNcell VM Heparin",
+        "1321N1 D5 Control" = "1321N1 Control",
+        "1321N1 D5 Heparin" = "1321N1 Heparin",
+        "SH-SY5Y D3 Control" = "SH-SY5Y Control",
+        "SH-SY5Y D3 Heparin" = "SH-SY5Y Heparin"
       )
     ) +
     theme(
@@ -749,19 +749,19 @@ txome_plot_goi <- function(gene_sel, gene_name) {
     scale_colour_manual(
       values = palette_merge[c(1, 2, 5, 6)],
       labels = c(
-        "P5D5Untreated" = "P5 D5 Ctrl",
-        "P5D5Treated" = "P5 D5 Hep",
-        "P13D5Untreated" = "P13 D5 Ctrl",
-        "P13D5Treated" = "P13 D5 Hep"
+        "P5D5Untreated" = "P+5 D5 Control",
+        "P5D5Treated" = "P+5 D5 Heparin",
+        "P13D5Untreated" = "P+13 D5 Control",
+        "P13D5Treated" = "P+13 D5 Heparin"
       )
     ) +
     scale_fill_manual(
       values = palette_merge[c(1, 2, 5, 6)],
       labels = c(
-        "P5D5Untreated" = "P5 D5 Ctrl",
-        "P5D5Treated" = "P5 D5 Hep",
-        "P13D5Untreated" = "P13 D5 Ctrl",
-        "P13D5Treated" = "P13 D5 Hep"
+        "P5D5Untreated" = "P+5 D5 Control",
+        "P5D5Treated" = "P+5 D5 Heparin",
+        "P13D5Untreated" = "P+13 D5 Control",
+        "P13D5Treated" = "P+13 D5 Heparin"
       )
     ) +
     scale_shape_manual(
@@ -772,10 +772,10 @@ txome_plot_goi <- function(gene_sel, gene_name) {
     ) +
     scale_x_discrete(
       labels = c(
-        "P5D5Untreated" = "P5 D5 Ctrl",
-        "P5D5Treated" = "P5 D5 Hep",
-        "P13D5Untreated" = "P13 D5 Ctrl",
-        "P13D5Treated" = "P13 D5 Hep"
+        "P5D5Untreated" = "P+5 D5 Control",
+        "P5D5Treated" = "P+5 D5 Heparin",
+        "P13D5Untreated" = "P+13 D5 Control",
+        "P13D5Treated" = "P+13 D5 Heparin"
       )
     ) +
     scale_y_log10(expand = expansion(0, 0.15)) +
