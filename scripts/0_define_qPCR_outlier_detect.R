@@ -9,7 +9,6 @@ library("tidyverse")
 ### qPCR_outlier_strict:
 ### Marks all replicates as outliers for removal in worse case
 
-
 # Create function that removes outliers
 # in each biological rep using the following method
 # If there is 1 observation:
@@ -21,8 +20,6 @@ library("tidyverse")
 # Remove reps that are too far away from the median Ct (selected threshold)
 # If there are > 2 observations, all values far away from each other:
 # Remove biological rep
-
-
 
 qPCR_clean_strict <- function(.data, Ct, threshold, ...) {
   # convert ... to character vector.
@@ -44,11 +41,13 @@ qPCR_clean_strict <- function(.data, Ct, threshold, ...) {
     full_join(median_Ct, by = dots) %>%
     filter(count > 1) %>%
     mutate(distance_med = abs({{ Ct }} - median_Ct)) %>%
-    mutate(keep = if_else(
-      count == 2,
-      if_else(distance_med * 2 < threshold, TRUE, FALSE),
-      if_else(distance_med < threshold, TRUE, FALSE)
-    ))
+    mutate(
+      keep = if_else(
+        count == 2,
+        if_else(distance_med * 2 < threshold, TRUE, FALSE),
+        if_else(distance_med < threshold, TRUE, FALSE)
+      )
+    )
 
   # count the # of TRUEs per sample
   count_true <- dev_test %>%
@@ -87,11 +86,13 @@ qPCR_outlier_strict <- function(.data, Ct, threshold, ...) {
     full_join(median_Ct, by = dots) %>%
     filter(count > 1) %>%
     mutate(distance_med = abs({{ Ct }} - median_Ct)) %>%
-    mutate(keep = if_else(
-      count == 2,
-      if_else(distance_med * 2 < threshold, TRUE, FALSE),
-      if_else(distance_med < threshold, TRUE, FALSE)
-    ))
+    mutate(
+      keep = if_else(
+        count == 2,
+        if_else(distance_med * 2 < threshold, TRUE, FALSE),
+        if_else(distance_med < threshold, TRUE, FALSE)
+      )
+    )
 
   # count the # of TRUEs per sample
   count_true <- dev_test %>%
