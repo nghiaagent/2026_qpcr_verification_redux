@@ -1,5 +1,7 @@
 # Import packages
 library("DESeq2")
+library("metan")
+library("plotrix")
 library("tidyverse")
 library("ggpattern")
 library("ggsignif")

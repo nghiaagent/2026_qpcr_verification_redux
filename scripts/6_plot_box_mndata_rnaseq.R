@@ -1,4 +1,7 @@
 # Import packages
+library("DESeq2")
+library("magrittr")
+library("tidyverse")
 
 # Define conditions of interest
 txome_conditions_interest <- c(
