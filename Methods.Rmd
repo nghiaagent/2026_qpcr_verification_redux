@@ -1,0 +1,384 @@
+---
+title: "Methods report"
+date: "`r Sys.Date()`"
+output:
+  rmdformats::robobook
+---
+
+```{r Load data, include=FALSE}
+# Load data
+getwd()
+source("./scripts/data_clean_for_all.R")
+
+pacman::p_load(tidyverse,
+               statmod,
+               EnhancedVolcano,
+               lme4,
+               sjPlot,
+               lmerTest,
+               emmeans,
+               afex)
+```
+
+# 1. Data import and clean-up
+
+-   Original .txt files exported from ExpressionSuite was used.
+-   The header of each file was removed; the remaining data was imported into R.
+-   After import, the following repairs were performed when necessary:
+    -   Gene name changes:
+        -   VSN -\> VCAN (Versican)
+        -   HSPE -\> HPSE (Heparanase)
+        -   C5-EP -\> GLCE (Glucuronic Acid Epimerase)
+    -   Typo fixes for cell population names, treatment names.
+    -   An "ID" column was generated (by combining plate name and well position) to uniquely identify each PCR well. -Data specs:
+
++----------------------+-------------------------------------------------------+------------+---------------------------------------------+
+| Column               | Data                                                  | Datatype   | Example(s)                                  |
++======================+=======================================================+============+=============================================+
+| Plate                | Name of PCR plate                                     | Character  | 2012-04-19_hMSC-19604_P7_D5_Hep_NDST-C5     |
++----------------------+-------------------------------------------------------+------------+---------------------------------------------+
+| ID                   | Identifier of PCR well (Plate name + well position)   | Character  | 2012-04-19_hMSC-19604_P7_D5_Hep_NDST-C5_H13 |
++----------------------+-------------------------------------------------------+------------+---------------------------------------------+
+| cell_line            | Name of cell population                               | Character  | hMSC-19604                                  |
+|                      |                                                       |            |                                             |
+|                      |                                                       |            | hMSC-20176                                  |
+|                      |                                                       |            |                                             |
+|                      |                                                       |            | hMSC-21558                                  |
++----------------------+-------------------------------------------------------+------------+---------------------------------------------+
+| passage              | Growth phase                                          | Character  | 5                                           |
+|                      |                                                       |            |                                             |
+|                      |                                                       |            | 7                                           |
+|                      |                                                       |            |                                             |
+|                      |                                                       |            | 13                                          |
++----------------------+-------------------------------------------------------+------------+---------------------------------------------+
+| day                  | Day of treatment                                      | Character  | 1                                           |
+|                      |                                                       |            |                                             |
+|                      |                                                       |            | 3                                           |
+|                      |                                                       |            |                                             |
+|                      |                                                       |            | 5                                           |
++----------------------+-------------------------------------------------------+------------+---------------------------------------------+
+| treatment            | Treatment used for 6-well plate (heparin or chlorate) | Character  | Hep                                         |
+|                      |                                                       |            |                                             |
+|                      |                                                       |            | Chl                                         |
++----------------------+-------------------------------------------------------+------------+---------------------------------------------+
+| treatment_group      | Treatment group (control or treatment)                | Character  | Ctrl                                        |
+|                      |                                                       |            |                                             |
+|                      |                                                       |            | Hep                                         |
+|                      |                                                       |            |                                             |
+|                      |                                                       |            | Chl                                         |
++----------------------+-------------------------------------------------------+------------+---------------------------------------------+
+| biological_replicate | Biological replicate number                           | Character  | 1                                           |
+|                      |                                                       |            |                                             |
+|                      |                                                       |            | 2                                           |
+|                      |                                                       |            |                                             |
+|                      |                                                       |            | 3                                           |
++----------------------+-------------------------------------------------------+------------+---------------------------------------------+
+| Detector             | Gene                                                  | Character  | 18S                                         |
+|                      |                                                       |            |                                             |
+|                      |                                                       |            | DCN                                         |
+|                      |                                                       |            |                                             |
+|                      |                                                       |            | GLCE                                        |
++----------------------+-------------------------------------------------------+------------+---------------------------------------------+
+| Ct                   | Threshold cycle                                       | Numeric    | 16.61                                       |
++----------------------+-------------------------------------------------------+------------+---------------------------------------------+
+
+An excerpt of the data (for GPC4, at day 3) can be viewed below:
+
+```{r echo=FALSE}
+p_load(DT)
+
+a <- c(
+  "./data/raw_cleaned/raw_hMSC_19604_P_all_cleaned.rds",
+  "./data/raw_cleaned/raw_hMSC_20176_P_all_cleaned.rds",
+  "./data/raw_cleaned/raw_hMSC_21558_P_all_cleaned.rds"
+) %>%
+  map(readRDS) %>%
+  bind_rows() %>%
+  arrange(biological_replicate) %>%
+  arrange(treatment_group) %>%
+  arrange(Detector) %>%
+  arrange(Plate)
+
+a %>%
+  filter(Detector == "GPC4") %>%
+  filter(day == "3") %>%
+  datatable(filter = 'top',
+            options = list(pageLength = 10))
+```
+
+# 2. 18S
+
+```{r echo=FALSE}
+p_load(plotly)
+
+plot <- ggplot(data = filter(a, Detector == "18S"),
+               aes(x = Ct)) +
+  geom_histogram() +
+  ggtitle("Histogram of 18S Ct values")
+
+ggplotly(plot)
+```
+
+A number of biological replicates contain abnormal 18S values. In rare cases, some biological replicates contained no usable 18S values, meaning that values needed to be shared between biological replicates in a PCR plate.
+
+Biological replicates containing abnormal 18S values are shown below.
+
+```{r echo=FALSE}
+
+x <- a %>%
+  mutate(technical_replicate = rep(1:4, nrow(a)/ 4)) %>%
+  mutate(technical_replicate = as.character(technical_replicate)) %>%
+  relocate(technical_replicate,
+           .after = biological_replicate) %>%
+  filter(Detector == "18S") %>%
+  ungroup() %>%
+  arrange(biological_replicate) %>%
+  arrange(treatment_group) %>%
+  arrange(Detector) %>%
+  arrange(Plate) %>%
+  select(!c("ID", "Detector", "technical_replicate")) %>%
+  nest(data = Ct, ) %>%
+  unnest_wider(col = data) %>%
+  pivot_wider(names_from = "biological_replicate",
+              names_prefix = "biol_rep_",
+              values_from = Ct)
+
+anti_join(x, df_18S_view) %>%
+  datatable(filter = 'top',
+            options = list(pageLength = 10)) 
+### Yes this is spaghetti, please check ./scripts/data_clean_for_all for real code
+```
+
+Accordingly, a filtering and averaging procedure was used.
+
+## Filtering of 18S values
+
+Expression of each gene was profiled in technical quadruplicates of biological replicates. Filtering was performed on technical replicates within each biological replicate. Looking into expression of ENO2 (and its corresponding 18S values) in hMSC-20176, P13, D3, Hep, as an example:
+
+```{r echo=FALSE}
+a %>%
+  filter(Plate == "2013-08-12_hMSC-20176_P13_D3_Hep_NSC") %>%
+  filter(Detector %in% c("ENO2", "18S")) %>%
+  datatable(filter = "top")
+  
+```
+
+Corresponding PCR plate layout:
+
+![](images/Picture3.png)
+
+The filtering procedure (adapted from [here](https://jorikbot.com/post/an-r-function-to-removing-qpcr-outliers-within-technical-replicates/)) is as follows:
+
+-   All technical replicates with Ct \< 10 or Ct \> 30 are removed.
+-   Within each biological replicate:
+    -   Biological replicates with only 1 technical replicate are removed.
+    -   Biological replicates with 2 technical replicates present:
+        -   If 2 technical replicates are within 2 Ct apart: Both technical replicates kept.
+        -   If 2 technical replicates are more than 2 Ct apart: Biological replicate removed.
+    -   Biological replicates with more than 2 technical replicates present:
+        -   Technical replicates that are more than 2 Ct apart from the median are removed.
+        -   If all technical replicates are more than 2 Ct apart from the median, the biological replicate is removed.
+
+![](images/infographic.png)
+
+18S values for the plate shown above was filtered using this procedure.
+
+Before:
+
+```{r echo=FALSE}
+anti_join(x, df_18S_view) %>%
+  filter(Plate == "2013-08-12_hMSC-20176_P13_D3_Hep_NSC") %>%
+  datatable(filter = 'top',
+            options = list(pageLength = 10))
+
+```
+
+After:
+
+```{r echo=FALSE}
+
+anti_join(df_18S_view, x) %>%
+  filter(Plate == "2013-08-12_hMSC-20176_P13_D3_Hep_NSC") %>%
+  datatable(filter = 'top',
+            options = list(pageLength = 10))
+
+```
+
+After filtering: - Hep (10ug) rep 1: One technical replicate was removed due to Ct \> 30 - Ctrl rep 2: One technical replicate removed due to Ct \> 2 away from median - Ctrl rep 3: One technical replicate removed due to Ct \> 30
+
+## Averaging of 18S Ct values
+
+The cleaned 18S Ct values were then averaged in stages to create one mean Ct value for each condition (Control / Treatment) within each PCR plate.
+
+![](images/Picture4.png)
+
+These Ct values were appended to the remaining data.
+
+# 3. Target genes
+
+## Filtering
+
+Expression of each gene was profiled in technical quadruplicates of biological replicates. Filtering was performed on technical replicates within each biological replicate. Back to the previous example of ENO2 at hMSC-20176, P13, D3, Hep:
+
+![](images/Picture3.png)
+
+The filtering procedure (adapted from [here](https://jorikbot.com/post/an-r-function-to-removing-qpcr-outliers-within-technical-replicates/)) is as follows:
+
+-   Within each biological replicate:
+    -   Biological replicates with only 1 technical replicate are removed.
+    -   Biological replicates with 2 technical replicates present:
+        -   If 2 technical replicates are within 2 Ct apart: Both technical replicates kept.
+        -   If 2 technical replicates are more than 2 Ct apart: Biological replicate removed.
+    -   Biological replicates with more than 2 technical replicates present:
+        -   Technical replicates that are more than 2 Ct apart from the median are removed.
+        -   If all technical replicates are more than 2 Ct apart from the median, the biological replicate is removed.
+
+![](images/infographic.png)
+
+ENO2 values for the plate shown above were filtered using this procedure. This is similar to the filtering procedure for 18S genes, except Ct values \> 10 or \< 30 were not removed.
+
+Before:
+
+```{r echo=FALSE}
+anti_join(df_raw_view, df_raw_clean_view) %>%
+  filter(Plate == "2013-08-12_hMSC-20176_P13_D3_Hep_NSC") %>%
+  filter(Detector == "ENO2") %>%
+  datatable(filter = 'top',
+            options = list(pageLength = 2))
+```
+
+After:
+
+```{r echo=FALSE}
+
+anti_join(df_raw_clean_view, df_raw_view) %>%
+  filter(Plate == "2013-08-12_hMSC-20176_P13_D3_Hep_NSC") %>%
+  filter(Detector == "ENO2") %>%
+  datatable(filter = 'top',
+            options = list(pageLength = 2))
+
+```
+
+In detail:
+
+-   Hep (treatment) rep 1: 1 technical replicate removed due to being \> 2 Ct away from the median
+-   Hep (treatment) rep 2: Biological replicate removed due to both technical replicates being \> 2 Ct away from each other.
+-   Control rep 1: 1 technical replicate removed due to being \> 2 Ct away from the median
+
+## Transformations
+
+-   dCt values were created using the formula: dCt = Ct - Ct_18S
+-   dCt values were "inverted", such that higher value indicated higher expression: dCt_neg = 40 - dCt
+-   Linear expression values were created, but not used: dCt_nexp = 2\^-dCt
+
+# 4. Statistics
+
+## Rationale
+
+This analysis focuses on day 3, Chlorate (vs. control) treatment data. In this study, there are various sources of gene expression changes:
+
+-   Sources that can be controlled:
+
+    -   Cell population
+
+    -   Treatment
+
+    -   Growth phases
+
+-   Sources that can't be controlled
+
+    -   Differences between each biological replicate on a 6-well plate. There are 2 ways to code this random effect using our data (see section 1 for detail of variables):
+
+        -   Plate/treatment_group/biological_replicate
+
+        -   cell_line/passage/treatment_group/biological_replicate
+
+            -   The combination of cell_line/passage/treatment_group uniquely identifies each condition (hence, each 6-well plate)
+
+        -   I used the former. However, because in each gene, each condition (e.g. hMSC-20176, P7, D3, Hep vs Ctrl) only occurs in one 6-well plate and one PCR plate, these 2 methods create identical models.
+
+        -   For example, with ENO2:
+
+    ```{r}
+    # Get data 
+
+    df_ENO2 <- filter(df_big,
+                     Detector == "ENO2",
+                     day == "3",
+                     treatment == "Chl")
+
+    # Fit
+
+    fit1 <- mixed(dCt_neg ~ treatment_group * passage + cell_line + (1 | Plate:treatment_group:biological_replicate) + (1 | Plate),
+                 data = df_ENO2)
+
+    fit2 <- mixed(dCt_neg ~ treatment_group * passage + cell_line + (1 | cell_line:passage:treatment_group:biological_replicate) + (1 | Plate),
+                 data = df_ENO2)
+
+    anova(fit1, fit2)
+
+    summary(fit1)
+
+    summary(fit2)
+    ```
+
+    -   Differences between PCR runs (i.e. PCR plate).
+
+## Modelling
+
+A linear model is fitted to the negative log2-expression `(40 - dCt)` of each gene at day 3 of treatment, coded to consider the sources of expression changes shown above. Additionally, assumptions of normality, independence, and homoscedasticity are also observed. When necessary, the PCR plate  term is removed to avoid singular fits [@oberpriller2022]. Additionally, gene expression of multiple genes were not detected at growth phase C, likely explained by the slower proliferation rate in these hMSC populations by this stage and the negative effects of Chl on cellular proliferation. Hence, when necessary, growth phase C was excluded from analysis.
+
+Genes are grouped based on their biological roles (that I know of).
+
+Code:
+
+```{r eval=FALSE, include=TRUE}
+
+fit <- mixed(dCt_neg ~ treatment_group * passage + cell_line + (1 | Plate:treatment_group:biological_replicate) + (1 | Plate),
+             data = df_ENO2)
+
+```
+Where:
+
+-   `treatment_group * passage` codes for the controlled effect of treatment (chlorate vs. control), growth phases and their interaction (i.e. chlorate may have an effect at some, but not all growth phases)
+-   `cell_line` codes for the controlled effect of heterogeneity between cell populations (I think)
+-   `(1 | Plate:treatment_group:biological_replicate)` codes for the uncontrolled differences between biological variables. It assumes that while the biological replicates may have different baseline expression; they share the same response to treatments and growth phases.
+-   `(1 | Plate)` codes for the uncontrolled differences between PCR plates.
+
+# Appendix
+
+Genes/conditions removed by the filtering procedure (section 3):
+
+```{r echo=FALSE}
+
+datatable(df_raw_outliers,
+          filter = "top")
+
+```
+
+List of PCR plates for each condition
+
+```{r echo=FALSE}
+
+df_Plates <- df_raw_view %>% select(c("Plate",
+                         "cell_line",
+                         "passage",
+                         "day",
+                         "treatment",
+                         "Detector"))
+
+x <- df_Plates[duplicated(df_Plates), ] %>%
+  select(!Detector) %>%
+  nest(data = Plate)
+
+x <- x %>%
+  mutate(unique_plates = map(.x = x$data,
+    .f = ~unique(.x$Plate))) %>%
+  select(!data) %>%
+  unnest_wider(col = unique_plates,
+               names_sep = "_")
+
+datatable(x, 
+          filter = "top")
+
+```

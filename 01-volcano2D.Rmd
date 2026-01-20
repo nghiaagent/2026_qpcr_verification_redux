@@ -1,0 +1,32 @@
+# Glimma volcano plots
+
+```{r include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
+
+source("scripts/0_env_prep.R")
+
+fit_contrasts <- readRDS(here(
+    "output",
+    "fit_contrasts.RDS"
+))
+
+quant_limma <- readRDS(file = here(
+    "output",
+    "quant_limma.RDS"
+))
+```
+
+## Glimma plots
+
+### Treatment P5 D5
+
+```{r echo = FALSE} 
+glimmaVolcano(
+    fit_contrasts,
+    coef = 1
+)
+```
+
+### Treatment P13 D5
+
+### P13 vs P5

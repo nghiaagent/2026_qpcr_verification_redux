@@ -1,0 +1,38 @@
+---
+title: "hMSC Transcriptome Report"
+author: "Mitchell Nguyen"
+date: "`r Sys.Date()`"
+output: bookdown::gitbook
+documentclass: book
+geometry: margin=2cm
+biblio-style: apalike
+link-citations: yes
+bibliography: references.bib
+---
+
+# Preface
+
+```{r echo = FALSE}
+source("./scripts/0_env_prep.R")
+
+fit_contrasts <- readRDS(here(
+    "output",
+    "fit_contrasts.RDS"
+))
+```
+
+## Methods
+
+#### Model matrix specifications
+
+```{r echo=FALSE}
+fit_contrasts[["design"]]
+```
+
+#### Contrast matrix specifications
+
+```{r echo=FALSE}
+fit_contrasts[["contrasts"]]
+```
+
+### Visualisation of DEGs
