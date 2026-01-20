@@ -1,3 +1,5 @@
+library("colorspace")
+
 # Define colour palettes
 
 # Palette 1: Set of colours for cell lines and timepoints
